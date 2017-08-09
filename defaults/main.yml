@@ -9,53 +9,16 @@ dnscache_group: dnscache
 dnscache_config_path: /etc/dnscache
 dnscache_bind_address: 127.0.0.1
 
-softlayer_internal_nameservers:
-- 10.0.80.11
-- 10.0.80.12
-
 # Defaults from legacy hosts file role so nyc zone builds correctly
-all_machines:
-  -
-     pqdn: 'service-solr-primary'
-     ip_int: '127.0.0.1'
-     aliases: []
-  -
-     pqdn: 'service-solr-replica'
-     ip_int: '127.0.0.1'
-     aliases: []
-  -
-     pqdn: 'service-solr'
-     ip_int: '127.0.0.1'
-     aliases: []
-  -
-     pqdn: 'service-mysql'
-     ip_int: '127.0.0.1'
-     aliases: []
-  -
-     pqdn: 'service-mysql-replica'
-     ip_int: '127.0.0.1'
-     aliases: []
-  -
-     pqdn: 'service-redis'
-     ip_int: '127.0.0.1'
-     aliases: []
-  -
-     pqdn: 'service-redis-replica'
-     ip_int: '127.0.0.1'
-     aliases: []
-  -
-     pqdn: 'service-redis-local'
-     ip_int: '127.0.0.1'
-     aliases: []
-  -
-     pqdn: 'service-gearman'
-     ip_int: '127.0.0.1'
-     aliases: []
-  -
-     pqdn: 'service-foundry'
-     ip_int: '127.0.0.1'
-     aliases: []
-  -
-     pqdn: 'service-zeppelin'
-     ip_int: '127.0.0.1'
-     aliases: []
+localhost_aliases:
+  - service-solr-primary
+  - service-solr-replica
+  - service-solr
+  - service-mysql
+  - service-mysql-replica
+  - service-redis
+  - service-redis-replica
+  - service-redis-local
+  - service-gearman
+  - service-foundry
+  - service-zeppelin

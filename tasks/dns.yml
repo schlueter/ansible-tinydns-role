@@ -1,16 +1,14 @@
 ---
-- name: Disable dhclient dns
-  copy:
-    src=etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
-    dest=/etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
-    owner=root
-    group=root
-    mode=0755
-
-- name: Use local dbndns
+- name: Generate Zone file
   template:
-    src=etc/resolv.conf.j2
-    dest=/etc/resolv.conf
+    src=etc/tinydns/root/data.j2
+    dest=/etc/tinydns/root/data
     owner=root
-    group=root
-    mode=0644
+    mode=644
+    backup=yes
+  register: dns_zone
+
+- name: Compile Zone file
+  command: /usr/bin/tinydns-data chdir={{ tinydns_config_path }}/root
+  when: dns_zone.changed
+  notify: restart unbound

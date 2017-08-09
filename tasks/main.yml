@@ -1,26 +1,6 @@
 ---
-
 - include: install.yml
-- include: configure.yml
-  tags: lastmile
 - include: dns.yml
-
-- name: Generate Zone file
-  template:
-    src=etc/tinydns/root/data.j2
-    dest=/etc/tinydns/root/data
-    owner=root
-    mode=644
-    backup=yes
-  register: dns_zone
   tags:
-  - dns-zones-only
-  - lastmile
-
-- name: Compile Zone file
-  command: /usr/bin/tinydns-data chdir={{ tinydns_config_path }}/root
-  when: dns_zone.changed
-  notify: restart dnscache
-  tags:
-  - dns-zones-only
-  - lastmile
+    - lastmile
+    - dns-zones-only

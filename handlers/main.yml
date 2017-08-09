@@ -1,3 +1,1 @@
 ---
-- name: restart dnscache
-  command: svc -t /etc/service/dnscache

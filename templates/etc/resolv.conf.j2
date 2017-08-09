@@ -1,4 +1,0 @@
-#{{ ansible_managed }}
-search {% for site in dns_sites | default([site_id]) %}   {{ site }}{% endfor %}
-
-nameserver 127.0.0.1

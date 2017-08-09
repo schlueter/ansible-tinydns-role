@@ -17,16 +17,6 @@
   - daemontools-run
   - ucspi-tcp
 
-# http://thedjbway.b0llix.net/djbdns/dnsroots.html
-# dbndns packages required. Do this before enabling tinydns
-# Run during `--check` so templating doesn't fail
-- name: Fetch addresses of current DNS root servers
-  shell: >
-    dnsip `dnsqr ns . | awk '/answer:/ { print $5; }' |sort`
-  register: dns_roots
-  tags: lastmile
-  check_mode: no
-
 - name: Create tinydns groups
   group:
     name={{ item }}
@@ -51,7 +41,6 @@
     name=svscan
     state=started
     enabled=yes
-  tags: skip_on_check
 
 - name: Setup tinydns
   command: >
@@ -64,60 +53,21 @@
     owner={{ tinydns_user }}
     group={{ tinydns_group }}
     state=directory
-  tags: skip_on_check
 
 - name: Change tinydns log directory configuration
   file:
     path={{ tinydns_config_path }}/log/main
     state=absent
     force=yes
-  tags: skip_on_check
 
 - name: Change tinydns log directory configuration
   file:
     dest={{ tinydns_config_path }}/log/main
     src=/var/log/tinydns/
     state=link
-  tags: skip_on_check
 
 - name: Create tinydns link for service daemon
   file:
     src={{ tinydns_config_path }}
     dest=/etc/service/tinydns
     state=link
-  tags: skip_on_check
-
-- name: Setup dnscache
-  command: >
-    dnscache-conf {{ dnscache_user }} {{ dnscache_group }} {{ dnscache_config_path }} {{ dnscache_bind_address }}
-  when: not dbndns_configured.stat.exists
-
-- name: Create dnscache log directory
-  file:
-    path=/var/log/dnscache
-    owner={{ dnscache_user }}
-    group={{ dnscache_group }}
-    state=directory
-  tags: skip_on_check
-
-- name: Change dnscache log directory configuration
-  file:
-    path={{ dnscache_config_path }}/log/main
-    state=absent
-    force=yes
-  tags: skip_on_check
-
-- name: Change dnscache log directory configuration
-  file:
-    dest={{ dnscache_config_path }}/log/main
-    src=/var/log/dnscache/
-    state=link
-  tags: skip_on_check
-
-- name: Create dnscache link for service daemon
-  file:
-    src={{ dnscache_config_path }}
-    dest=/etc/service/dnscache
-    state=link
-  tags: skip_on_check
-

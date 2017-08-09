@@ -1,8 +1,0 @@
-{{ ansible_managed | comment }}
-{{ dns_roots.stdout }}
-{% if 'softlayer' in group_names %}
-{% for nameserver in softlayer_internal_nameservers %}
-{{ nameserver }}
-{% endfor %}
-{% endif %}
-{{ nycloud_controller_address | default('') }}
