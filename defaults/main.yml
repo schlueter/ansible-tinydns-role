@@ -3,22 +3,4 @@ tinydns_user: tinydns
 tinydns_group: tinydns
 tinydns_config_path: /etc/tinydns
 tinydns_bind_address: 127.0.0.2
-
-dnscache_user: dnscache
-dnscache_group: dnscache
-dnscache_config_path: /etc/dnscache
-dnscache_bind_address: 127.0.0.1
-
-# Defaults from legacy hosts file role so nyc zone builds correctly
-localhost_aliases:
-  - service-solr-primary
-  - service-solr-replica
-  - service-solr
-  - service-mysql
-  - service-mysql-replica
-  - service-redis
-  - service-redis-replica
-  - service-redis-local
-  - service-gearman
-  - service-foundry
-  - service-zeppelin
+tinydns_data: ""

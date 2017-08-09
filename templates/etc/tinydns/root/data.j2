@@ -1,6 +1,2 @@
 # {{ ansible_managed }}
-{% if 'dal5' in group_names %}
-{% include 'partials/dal5.j2' %}
-{% else %}
-{% include 'partials/dev.j2' %}
-{% endif %}
+{{ tinydns_data }}

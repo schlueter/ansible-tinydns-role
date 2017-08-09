@@ -19,22 +19,16 @@
 
 - name: Create tinydns groups
   group:
-    name={{ item }}
+    name={{ tinydns_user }}
     system=yes
-  with_items:
-    - "{{ tinydns_user }}"
-    - "{{ dnscache_user }}"
 
 - name: Create tinydns users
   user:
-    name={{ item }}
-    group={{ item }}
+    name={{ tinydns_user }}
+    group={{ tinydns_user }}
     home=/nonexistent
     shell=/bin/false
     system=yes
-  with_items:
-    - "{{ tinydns_user }}"
-    - "{{ dnscache_user }}"
 
 - name: Ensure svscan is running
   service:
