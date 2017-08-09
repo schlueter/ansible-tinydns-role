@@ -1,0 +1,16 @@
+---
+- name: Disable dhclient dns
+  copy:
+    src=etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
+    dest=/etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
+    owner=root
+    group=root
+    mode=0755
+
+- name: Use local dbndns
+  template:
+    src=etc/resolv.conf.j2
+    dest=/etc/resolv.conf
+    owner=root
+    group=root
+    mode=0644

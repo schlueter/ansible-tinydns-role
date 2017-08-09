@@ -1,0 +1,123 @@
+---
+- name: Check to see if dbndns is already installed
+  stat:
+    path={{ tinydns_config_path }}
+  register: dbndns_configured
+
+- name: Install dbndns packages
+  apt:
+    name={{ item }}
+    state=latest
+    update_cache=yes
+    install_recommends=no
+    cache_valid_time=1800
+  with_items:
+  - dbndns
+  - daemontools
+  - daemontools-run
+  - ucspi-tcp
+
+# http://thedjbway.b0llix.net/djbdns/dnsroots.html
+# dbndns packages required. Do this before enabling tinydns
+# Run during `--check` so templating doesn't fail
+- name: Fetch addresses of current DNS root servers
+  shell: >
+    dnsip `dnsqr ns . | awk '/answer:/ { print $5; }' |sort`
+  register: dns_roots
+  tags: lastmile
+  check_mode: no
+
+- name: Create tinydns groups
+  group:
+    name={{ item }}
+    system=yes
+  with_items:
+    - "{{ tinydns_user }}"
+    - "{{ dnscache_user }}"
+
+- name: Create tinydns users
+  user:
+    name={{ item }}
+    group={{ item }}
+    home=/nonexistent
+    shell=/bin/false
+    system=yes
+  with_items:
+    - "{{ tinydns_user }}"
+    - "{{ dnscache_user }}"
+
+- name: Ensure svscan is running
+  service:
+    name=svscan
+    state=started
+    enabled=yes
+  tags: skip_on_check
+
+- name: Setup tinydns
+  command: >
+    tinydns-conf {{ tinydns_user }} {{ tinydns_group }} {{ tinydns_config_path }} {{ tinydns_bind_address }}
+  when: not dbndns_configured.stat.exists
+
+- name: Create tinydns log directory
+  file:
+    path=/var/log/tinydns
+    owner={{ tinydns_user }}
+    group={{ tinydns_group }}
+    state=directory
+  tags: skip_on_check
+
+- name: Change tinydns log directory configuration
+  file:
+    path={{ tinydns_config_path }}/log/main
+    state=absent
+    force=yes
+  tags: skip_on_check
+
+- name: Change tinydns log directory configuration
+  file:
+    dest={{ tinydns_config_path }}/log/main
+    src=/var/log/tinydns/
+    state=link
+  tags: skip_on_check
+
+- name: Create tinydns link for service daemon
+  file:
+    src={{ tinydns_config_path }}
+    dest=/etc/service/tinydns
+    state=link
+  tags: skip_on_check
+
+- name: Setup dnscache
+  command: >
+    dnscache-conf {{ dnscache_user }} {{ dnscache_group }} {{ dnscache_config_path }} {{ dnscache_bind_address }}
+  when: not dbndns_configured.stat.exists
+
+- name: Create dnscache log directory
+  file:
+    path=/var/log/dnscache
+    owner={{ dnscache_user }}
+    group={{ dnscache_group }}
+    state=directory
+  tags: skip_on_check
+
+- name: Change dnscache log directory configuration
+  file:
+    path={{ dnscache_config_path }}/log/main
+    state=absent
+    force=yes
+  tags: skip_on_check
+
+- name: Change dnscache log directory configuration
+  file:
+    dest={{ dnscache_config_path }}/log/main
+    src=/var/log/dnscache/
+    state=link
+  tags: skip_on_check
+
+- name: Create dnscache link for service daemon
+  file:
+    src={{ dnscache_config_path }}
+    dest=/etc/service/dnscache
+    state=link
+  tags: skip_on_check
+

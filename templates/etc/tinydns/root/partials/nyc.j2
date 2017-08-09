@@ -1,0 +1,9 @@
+.nyc::localhost.
+{% for node in all_machines %}
++{{ node.pqdn }}.nyc:{{ node.ip_int }}:600
+{% if node.aliases %}
+{% for alias in node.aliases %}
++{{ alias }}.nyc:{{ node.ip_int }}:60
+{% endfor %}
+{% endif %}
+{% endfor %}

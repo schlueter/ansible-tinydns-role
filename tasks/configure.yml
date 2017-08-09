@@ -1,0 +1,36 @@
+---
+- name: Update DNS root hints
+  template:
+    src={{ dnscache_config_path.strip('/') }}/root/servers/@.j2
+    dest={{ dnscache_config_path }}/root/servers/@
+
+- name: Allow internal hosts to query dnscache
+  file:
+    path={{ dnscache_config_path }}/root/ip/{{ dns_ip_query }}
+    state=touch
+
+- name: Send internal domains to tinydns
+  lineinfile:
+    dest={{ dnscache_config_path }}/root/servers/{{ item }}
+    line="{{ tinydns_bind_address }}"
+    create=yes
+  with_items:
+  - "{{ dns_sites | default(site_id) }}"
+
+- name: Send private ips to tinydns
+  lineinfile:
+    dest={{ dnscache_config_path }}/root/servers/{{ dns_arpa }}
+    line="{{ tinydns_bind_address }}"
+    create=yes
+
+- name: Send www to tinydns
+  lineinfile:
+    dest={{ dnscache_config_path }}/root/servers/{{ item }}
+    line="{{ tinydns_bind_address }}"
+    create=yes
+  with_items:
+  - "{{ base_domain }}"
+  - "{{ base_domain_uk }}"
+  - "{{ base_domain_de }}"
+  when: "'icinga' not in group_names"
+
