@@ -11,4 +11,3 @@
 - name: Compile Zone file
   command: /usr/bin/tinydns-data chdir={{ tinydns_config_path }}/root
   when: dns_zone.changed
-  notify: restart unbound

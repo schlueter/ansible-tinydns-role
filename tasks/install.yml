@@ -48,11 +48,18 @@
     group={{ tinydns_group }}
     state=directory
 
+- name: stat log directory
+  stat: path={{ tinydns_config_path }}/log/main
+  register: tinydns_log_dir
+
 - name: Change tinydns log directory configuration
   file:
     path={{ tinydns_config_path }}/log/main
     state=absent
     force=yes
+  when:
+    - "'islnk' in tinydns_log_dir.stat"
+    - not tinydns_log_dir.stat.islnk
 
 - name: Change tinydns log directory configuration
   file:

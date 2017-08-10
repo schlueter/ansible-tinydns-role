@@ -1,6 +1,9 @@
 ---
-- hosts: unbound
+- hosts: "{{ hosts_group }}"
   become: yes
   gather_facts: yes
+  vars:
+    tinydns_data: |
+      =testrecord.local:127.0.0.1:60
   roles:
     - "{{ playbook_dir  }}"
